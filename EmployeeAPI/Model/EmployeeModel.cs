@@ -1,6 +1,6 @@
 ﻿namespace EmployeeAPI.Model
 {
-    public class Employee
+    public class EmployeeModel
     {
         public int id { set; get; }
         public string name {  set; get; }   

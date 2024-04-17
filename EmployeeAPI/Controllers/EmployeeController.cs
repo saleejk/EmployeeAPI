@@ -1,4 +1,5 @@
 ﻿using EmployeeAPI.Model;
+using EmployeeAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeAPI.Controllers
@@ -7,47 +8,40 @@ namespace EmployeeAPI.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        public static List<Employee> employees = new List<Employee>();
-        [HttpPost]
-        public void addEmployee(Employee employee) {
-            employees.Add(employee);
+        private readonly IEmployee _employ;
+        public EmployeeController(IEmployee employy)
+        {
+            _employ = employy;
         }
         [HttpGet]
-        public List<Employee> getAllEmployee()
+        public IEnumerable<EmployeeModel> GetAll()
         {
-            return employees;
+            return _employ.getEmployee();
+        }
+        [HttpPost]
+        public IEnumerable<EmployeeModel> addEmployee(EmployeeModel em)
+        {
+            return _employ.addEmployee(em);
         }
         [HttpPut]
-        public string editEmployee(int id, Employee updates)
-        {
-            var isEmployeeExists = employees.FirstOrDefault(user => user.id == id);
-            if (isEmployeeExists == null) {
-                return "employeeNotFound";
-            }
-            isEmployeeExists.name = updates.name;
-            isEmployeeExists.age = updates.age;
-            isEmployeeExists.designation = updates.designation;
-            return "successfully updated employee details";
+        public IEnumerable<EmployeeModel>editEmployee(int id,EmployeeModel em) { 
+           
+            return _employ.editEmployee(id,em);
         }
         [HttpDelete]
-        public void deleleEmployee(int id)
+        public void deleteEmployee(int id)
         {
-            var isEmployeeExists = employees.FirstOrDefault(employee => employee.id == id);
-            if (isEmployeeExists != null) {
-                employees.Remove(isEmployeeExists);
-            }
+            _employ.deleteEmployee(id);
         }
-        [HttpGet("{id}")]
-        public Employee getById(int id)
+        [HttpGet("getbyid{id:int}")]
+        public EmployeeModel getElementById(int id)
         {
-            var em = employees.FirstOrDefault(e => e.id == id);
-            if(em!=null)
-            {
-                return em;
-            }
-            return null;
+            return _employ.getElementById(id);
         }
+
 
     }
 
 }
+
+
